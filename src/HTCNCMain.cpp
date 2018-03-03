@@ -23,55 +23,48 @@
 
 #include <QMessageBox>
 
-
 #include <iostream>
 #include <fstream>
 
 //#include <windows.h>
 //#include <Wincon.h>
 
+void qtMessageHandler(QtMsgType type, const char *msg) {
+  HTCNC::Console &con = HTCNC::Console::Instance();
 
-void qtMessageHandler(QtMsgType type, const char *msg)
-{
-	HTCNC::Console&	con = HTCNC::Console::Instance();
-
-	switch (type) {
-	case QtDebugMsg:
-		con << "QtDebug: ";
-		break;
-	case QtWarningMsg:
-		con << "QtWarning: ";
-		break;
-	case QtCriticalMsg:
-		con << "QtCritical: ";
-		break;
-	case QtFatalMsg:
-		con << "QtFatal: ";
-		break;
-	}
-	con << msg << "\n";
+  switch (type) {
+  case QtDebugMsg:
+    con << "QtDebug: ";
+    break;
+  case QtWarningMsg:
+    con << "QtWarning: ";
+    break;
+  case QtCriticalMsg:
+    con << "QtCritical: ";
+    break;
+  case QtFatalMsg:
+    con << "QtFatal: ";
+    break;
+  }
+  con << msg << "\n";
 }
 
+int main(int argc, char *argv[]) {
+  QCoreApplication::setOrganizationName("WhirlingChair");
+  QCoreApplication::setOrganizationDomain("whirlingchair.com");
+  QCoreApplication::setApplicationName("CNC Halftone Wizard");
 
-int main(int argc, char *argv[])
-{
-	QCoreApplication::setOrganizationName("WhirlingChair");
-	QCoreApplication::setOrganizationDomain("whirlingchair.com");
-	QCoreApplication::setApplicationName("CNC Halftone Wizard");
+  QApplication app(argc, argv);
+  HTCNCUI::MainWindow mainWindow;
 
-	QApplication app(argc, argv);
-	HTCNCUI::MainWindow mainWindow;
+  qInstallMsgHandler(qtMessageHandler);
 
-	qInstallMsgHandler(qtMessageHandler);
+  // AllocConsole();
+  // freopen("conin$","r",stdin);
+  // freopen("conout$","w",stdout);
+  // freopen("conout$","w",stderr);
 
-	//AllocConsole(); 
-	//freopen("conin$","r",stdin); 
-	//freopen("conout$","w",stdout); 
-	//freopen("conout$","w",stderr);
+  mainWindow.show();
 
-	mainWindow.show();
-
-	return app.exec();
-} 
-
-
+  return app.exec();
+}
