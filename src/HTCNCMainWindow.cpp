@@ -31,7 +31,8 @@
 #include "HTCNCConsole.h"
 #include "HTCNCHalftoner.h"
 
-#include <assert.h>
+#include <cassert>
+#include <iostream>
 
 static const QString VERSION_STR("0.1.0");
 
@@ -58,9 +59,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   if (settings.contains("halftone/source_pixel_step"))
     m_ui.m_stepSpinBox->setValue(
         settings.value("halftone/source_pixel_step").toInt());
-  if (settings.contains("halftone/min_dot_gap"))
-    m_ui.m_minDotGapLineEdit->setText(
-        settings.value("halftone/min_dot_gap").toString());
+  if (settings.contains("halftone/dot_distance"))
+    m_ui.m_dotDistance->setText(
+        settings.value("halftone/dot_distance").toString());
   if (settings.contains("halftone/max_cut_depth_pct"))
     m_ui.m_depthPercentageSpinBox->setValue(
         settings.value("halftone/max_cut_depth_pct").toInt());
@@ -103,13 +104,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   connect(m_ui.m_stepSpinBox, SIGNAL(valueChanged(int)),
           SLOT(recomputeOutput()));
 
-  connect(m_ui.m_minDotGapLineEdit, SIGNAL(editingFinished()),
+  connect(m_ui.m_dotDistance, SIGNAL(editingFinished()),
           SLOT(recomputeOutput()));
 
   connect(m_ui.m_depthPercentageSpinBox, SIGNAL(valueChanged(int)),
           SLOT(recomputeOutput()));
 
-  connect(m_ui.m_toolDepthLineEdit, SIGNAL(editingFinished()),
+  connect(m_ui.m_targetWidth, SIGNAL(editingFinished()),
+          SLOT(recomputeOutput()));
+
+  connect(m_ui.m_targetWidth, SIGNAL(editingFinished()),
+          SLOT(recomputeOutput()));
+
+  connect(m_ui.m_targetHeight, SIGNAL(editingFinished()),
           SLOT(recomputeOutput()));
 
   connect(m_ui.m_toolWidthLineEdit, SIGNAL(editingFinished()),
@@ -205,8 +212,8 @@ void MainWindow::closeEvent(QCloseEvent *event) {
   QSettings settings;
 
   settings.setValue("halftone/source_pixel_step", m_ui.m_stepSpinBox->value());
-  settings.setValue("halftone/min_dot_gap",
-                    m_ui.m_minDotGapLineEdit->text().toDouble());
+  settings.setValue("halftone/dot_distance",
+                    m_ui.m_dotDistance->text().toDouble());
   settings.setValue("halftone/max_cut_depth_pct",
                     m_ui.m_depthPercentageSpinBox->value());
 
@@ -232,17 +239,21 @@ void MainWindow::recomputeOutput() {
 }
 
 void MainWindow::regenerate(bool generateGCode, const QString &filename) {
-  int scale_factor(m_ui.m_zoomPreviewSlider->value());
-  int step(m_ui.m_stepSpinBox->value());
-  int depth_percentage(m_ui.m_depthPercentageSpinBox->value());
+  int const scale_factor(m_ui.m_zoomPreviewSlider->value());
+  int const step(m_ui.m_stepSpinBox->value());
+  int const depth_percentage(m_ui.m_depthPercentageSpinBox->value());
+  int const target_width(m_ui.m_targetWidth->text().toInt());
+  int const target_height(m_ui.m_targetHeight->text().toInt());
   double tool_width(m_ui.m_toolWidthLineEdit->text().toDouble());
   double tool_depth(m_ui.m_toolDepthLineEdit->text().toDouble());
-  double min_dot_gap(m_ui.m_minDotGapLineEdit->text().toDouble());
+  double const dot_distance(m_ui.m_dotDistance->text().toDouble());
   double fastZ(m_ui.m_fastZLineEdit->text().toDouble());
   double max_dot_size(tool_width * depth_percentage / 100);
 
+  std::cout << "TW " << target_width << std::endl;
+
   QPixmap src_pm(m_sourceFilename);
-  QImage dst_img(src_pm.width() * scale_factor, src_pm.height() * scale_factor,
+  QImage dst_img(target_width * scale_factor, target_height * scale_factor,
                  QImage::Format_RGB32);
   Halftoner::CNCParameters params;
 
@@ -250,8 +261,10 @@ void MainWindow::regenerate(bool generateGCode, const QString &filename) {
   params.m_fullToolDepth = tool_depth;
   params.m_fullToolWidth = tool_width;
   params.m_maxCutPercent = depth_percentage / 100.0;
-  params.m_minDotGap = min_dot_gap;
+  params.m_dotDistance = dot_distance;
   params.m_fastZ = fastZ;
+  params.m_targetWidth = target_width;
+  params.m_targetHeight = target_height;
 
   Halftoner ht(src_pm, dst_img, scale_factor, generateGCode, params);
 
@@ -260,10 +273,20 @@ void MainWindow::regenerate(bool generateGCode, const QString &filename) {
   m_sourceImageLabel->setPixmap(src_pm);
   m_outputImageLabel->setPixmap(QPixmap::fromImage(dst_img));
 
-  m_ui.m_outputWidthLabel->setText(
-      QString::number(src_pm.width() * (max_dot_size + min_dot_gap) / step));
-  m_ui.m_outputHeightLabel->setText(
-      QString::number(src_pm.height() * (max_dot_size + min_dot_gap) / step));
+  std::cout << "STEP " << step << std::endl;
+  std::cout << "PIC WIDTH " << src_pm.width() << std::endl;
+  std::cout << "MAX_DOT_SIZE " << max_dot_size << std::endl;
+
+  m_ui.m_pic_height->setText(QString::number(src_pm.height()));
+  m_ui.m_pic_width->setText(QString::number(src_pm.width()));
+
+#if 0
+  // Not needed????
+  m_ui.m_outputWidthLabel->setText(QString::number(
+      src_pm.width() * (max_dot_size + min_dot_gap) / step, 'g', 3));
+  m_ui.m_outputHeightLabel->setText(QString::number(
+      src_pm.height() * (max_dot_size + min_dot_gap) / step, 'g', 3));
+#endif
   m_ui.m_outputCutsLabel->setText(tr("%1, requiring %2 minutes at 1 second/cut")
                                       .arg(QString::number(cut_count))
                                       .arg(QString::number(cut_count / 60.0)));

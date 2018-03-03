@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>595</height>
+    <width>928</width>
+    <height>731</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -40,49 +40,49 @@
         <item row="0" column="0">
          <widget class="QLabel" name="label_2">
           <property name="text">
-           <string>Source Pixel Step</string>
+           <string>Source Pixel Radius</string>
           </property>
          </widget>
         </item>
         <item row="0" column="1">
          <widget class="QSpinBox" name="m_stepSpinBox">
           <property name="minimum">
-           <number>2</number>
+           <number>1</number>
           </property>
           <property name="maximum">
-           <number>30</number>
+           <number>50</number>
           </property>
           <property name="singleStep">
-           <number>2</number>
+           <number>1</number>
           </property>
           <property name="value">
-           <number>6</number>
+           <number>20</number>
           </property>
          </widget>
         </item>
         <item row="1" column="0">
          <widget class="QLabel" name="label_15">
           <property name="text">
-           <string>Min Dot Gap</string>
+           <string>Dot Distance</string>
           </property>
          </widget>
         </item>
         <item row="1" column="1">
          <layout class="QHBoxLayout" name="horizontalLayout_6">
           <item>
-           <widget class="QLineEdit" name="m_minDotGapLineEdit">
+           <widget class="QLineEdit" name="m_dotDistance">
             <property name="toolTip">
              <string>Minimum gap between dots</string>
             </property>
             <property name="text">
-             <string>0.025</string>
+             <string>5.0</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QLabel" name="label_16">
             <property name="text">
-             <string>in.</string>
+             <string>mm</string>
             </property>
            </widget>
           </item>
@@ -92,6 +92,13 @@
          <widget class="QLabel" name="label_6">
           <property name="text">
            <string>Max Cut Depth </string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_24">
+          <property name="text">
+           <string>Target Width</string>
           </property>
          </widget>
         </item>
@@ -112,7 +119,7 @@
              <number>1</number>
             </property>
             <property name="value">
-             <number>50</number>
+             <number>25</number>
             </property>
            </widget>
           </item>
@@ -125,7 +132,7 @@
           </item>
          </layout>
         </item>
-        <item row="3" column="1">
+        <item row="5" column="1">
          <spacer name="verticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -137,6 +144,49 @@
            </size>
           </property>
          </spacer>
+        </item>
+        <item row="3" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QLineEdit" name="m_targetWidth">
+            <property name="text">
+             <string>100</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_25">
+            <property name="text">
+             <string>mm</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_26">
+          <property name="text">
+           <string>Target Height</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QLineEdit" name="m_targetHeight">
+            <property name="text">
+             <string>150</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_27">
+            <property name="text">
+             <string>mm</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
@@ -267,7 +317,7 @@ G90</string>
           <item>
            <widget class="QLabel" name="label_3">
             <property name="text">
-             <string>in.</string>
+             <string>mm</string>
             </property>
            </widget>
           </item>
@@ -295,7 +345,7 @@ G90</string>
           <item>
            <widget class="QLabel" name="label_10">
             <property name="text">
-             <string>in.</string>
+             <string>mm</string>
             </property>
            </widget>
           </item>
@@ -318,7 +368,7 @@ G90</string>
       </widget>
      </widget>
     </item>
-    <item row="0" column="1" rowspan="2">
+    <item row="0" column="1" rowspan="4">
      <widget class="QSplitter" name="splitter">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -363,7 +413,7 @@ G90</string>
              <x>0</x>
              <y>0</y>
              <width>248</width>
-             <height>410</height>
+             <height>511</height>
             </rect>
            </property>
           </widget>
@@ -401,8 +451,8 @@ G90</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>228</width>
-             <height>371</height>
+             <width>222</width>
+             <height>471</height>
             </rect>
            </property>
           </widget>
@@ -434,7 +484,7 @@ G90</string>
       </widget>
      </widget>
     </item>
-    <item row="1" column="0" rowspan="2">
+    <item row="3" column="0" rowspan="2">
      <widget class="QPlainTextEdit" name="m_logTextEdit">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
@@ -444,7 +494,7 @@ G90</string>
       </property>
      </widget>
     </item>
-    <item row="2" column="1">
+    <item row="4" column="1">
      <widget class="QGroupBox" name="groupBox">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -456,53 +506,6 @@ G90</string>
        <string>Output</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_5">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_7">
-         <property name="text">
-          <string>Approx. Width:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <layout class="QHBoxLayout" name="horizontalLayout_8">
-         <item>
-          <widget class="QLabel" name="m_outputWidthLabel">
-           <property name="maximumSize">
-            <size>
-             <width>50</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>0</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_21">
-           <property name="text">
-            <string>in.</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_8">
-         <property name="text">
-          <string>Approx. Height:</string>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_7">
          <item>
@@ -530,24 +533,25 @@ G90</string>
          <item>
           <widget class="QLabel" name="label_22">
            <property name="text">
-            <string>in.</string>
+            <string>mm</string>
            </property>
           </widget>
          </item>
         </layout>
        </item>
-       <item row="1" column="2">
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>Approx. Width:</string>
          </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>372</width>
-           <height>20</height>
-          </size>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>Approx. Height:</string>
          </property>
-        </spacer>
+        </widget>
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="label_9">
@@ -572,7 +576,144 @@ G90</string>
          </property>
         </widget>
        </item>
+       <item row="0" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <item>
+          <widget class="QLabel" name="m_outputWidthLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>50</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>0</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_21">
+           <property name="text">
+            <string>mm</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="2">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
       </layout>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QGroupBox" name="groupBox_4">
+      <property name="title">
+       <string>Input</string>
+      </property>
+      <widget class="QLabel" name="label_18">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>101</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Picture Width</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_19">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>40</y>
+         <width>101</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Picture Height</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_20">
+       <property name="geometry">
+        <rect>
+         <x>170</x>
+         <y>20</y>
+         <width>41</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>pixel</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_23">
+       <property name="geometry">
+        <rect>
+         <x>170</x>
+         <y>40</y>
+         <width>41</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>pixel</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="m_pic_width">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>20</y>
+         <width>41</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>100</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="m_pic_height">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>40</y>
+         <width>41</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>100</string>
+       </property>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -582,8 +723,8 @@ G90</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
-     <height>22</height>
+     <width>928</width>
+     <height>31</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

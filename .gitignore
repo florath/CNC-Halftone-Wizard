@@ -1,0 +1,7 @@
+Makefile
+Makefile.Debug
+Makefile.Release
+moc/
+qrc/
+release/
+ui_inc/

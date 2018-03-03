@@ -57,9 +57,11 @@ public:
     double m_fullToolDepth; /// Depth that can be cut by tool
     double m_fullToolWidth; /// Width of tool at full tool depth
     double
-        m_maxCutPercent; /// Percentage used to compute max cut depth/diameter
-    double m_minDotGap;  /// Minimum gap between dots
-    double m_fastZ;      /// Z depth where tool can be moved quickly
+        m_maxCutPercent;  /// Percentage used to compute max cut depth/diameter
+    double m_dotDistance; /// Distance between two dot (centers)
+    double m_fastZ;       /// Z depth where tool can be moved quickly
+    int m_targetWidth;    /// Target width in mm
+    int m_targetHeight;   /// Target height in mm
   } CNCParameters;
 
   /**

@@ -1,4 +1,10 @@
 
+====
+This fork is alpha!
+It completely re-implements the halftone algorithm and G-Code writing.
+Use at your own risk!
+====
+
 Building the CNC Halftone Wizard
 If you want to (or have to) build the app from source, it's pretty painless if 
 you've already got Qt and a C++ compiler installed on your computer.  Many 

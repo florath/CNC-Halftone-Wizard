@@ -20,8 +20,10 @@
 
 #include <QImage>
 #include <QPixmap>
+#include <QPainter>
 
-#include <math.h>
+#include <cmath>
+#include <iostream>
 
 namespace HTCNC {
 // Returns the dot size for a given point in an image.  The returned value
@@ -33,33 +35,113 @@ namespace HTCNC {
 // would be averaged to determine the final dot size.  Note that the
 // radius determines a square (not a circle) around the point that is
 // being queried.
-double getDotSize(const QImage &src, int x, int y, int radius) {
-  int total_intensity = 0;
-  int pix_count = 0;
+double getDotSize(QImage const &src, int const x, int const y,
+                  int const radius) {
+  int total_intensity(0);
+  int pix_count(0);
 
-  for (int i = x - radius; i < x + radius; ++i) {
-    for (int j = y - radius; j < y + radius; ++j) {
+  for (int x_idx(x - radius); x_idx < x + radius; ++x_idx) {
+    for (int y_idx(y - radius); y_idx < y + radius; ++y_idx) {
       // Bounds checking.
-      if (i >= 0 && i < src.width() && j >= 0 && j < src.height()) {
-        int gray(qGray(src.pixel(i, j)));
-
-        total_intensity += gray;
-        ++pix_count;
+      if (x_idx < 0 or x_idx >= src.width() or y_idx < 0 or
+          y_idx >= src.height()) {
+        continue;
       }
+      total_intensity += qGray(src.pixel(x_idx, y_idx));
+      ++pix_count;
+    }
+  }
+  return static_cast<double>(total_intensity) / pix_count / 255.0;
+}
+
+Halftoner::Halftoner(QPixmap const &src, QImage &dest, int const scale,
+                     bool const generateGCode, CNCParameters const &params)
+    : m_cutCount(0) {
+  double const max_dot_size(params.m_fullToolWidth * params.m_maxCutPercent);
+
+  QImage const src_img(src.toImage());
+
+  //  dest.fill(qRgb(0, 0, 0));
+
+  //  Init the painter
+  QPainter p;
+  p.begin(&dest);
+
+  // DestinationOver results in the current painting
+  // going below the existing image.
+  p.setRenderHints(QPainter::HighQualityAntialiasing);
+
+  p.setBrush(Qt::black);
+  p.setPen(QPen(Qt::white, 3.0));
+
+  // Erase the whole image.
+  p.drawRect(0, 0, dest.width(), dest.height());
+
+  p.setBrush(Qt::white);
+
+  int offset(0);
+  bool write_y(true);
+
+  for (double y(params.m_dotDistance * scale);
+       y < params.m_targetHeight * scale - params.m_dotDistance * scale;
+       y += params.m_dotDistance * scale) {
+    write_y = true;
+    int const y_src(y * src_img.height() / (params.m_targetHeight * scale));
+    for (double x(params.m_dotDistance * scale + offset);
+         x < params.m_targetWidth * scale - params.m_dotDistance * scale -
+                 offset - 1.0; // -1 => rounding.
+         x += params.m_dotDistance * scale) {
+      int const x_src(x * src_img.width() / (params.m_targetWidth * scale));
+
+      double const ds(getDotSize(src_img, x_src, y_src, params.m_step));
+      if (ds == 0.0) {
+        continue;
+      }
+      ++m_cutCount;
+      p.drawEllipse(x, y, ds * max_dot_size * scale, ds * max_dot_size * scale);
+
+      // ToDo: refactor: extract method.
+      if (generateGCode) {
+        // Write the g code to cut this dot.
+        // Lift tool to safe 'fast z' depth.
+        m_gCode += "G00Z" + QString::number(params.m_fastZ) + "\n";
+        m_gCode += "G00X" + QString::number(x / scale);
+        if (write_y) {
+          m_gCode += "Y" + QString::number(y / scale);
+          write_y = false;
+        }
+        m_gCode += "\n";
+
+        // Move tool to cut depth.
+        m_gCode += "G01Z" + QString::number(-params.m_fullToolDepth *
+                                            params.m_maxCutPercent * ds) +
+                   "\n";
+      }
+    }
+    if (offset) {
+      offset = 0;
+    } else {
+      offset = params.m_dotDistance / 2 * scale;
     }
   }
 
-  return (total_intensity / pix_count / 255.0);
+  p.end();
+
+  // Finally, make sure the tool is parked at a safe depth.
+  m_gCode += "G00Z" + QString::number(
+                          params.m_fastZ); // Lift tool to safe 'fast z' depth.
+  m_gCode += "\n";
 }
 
-Halftoner::Halftoner(const QPixmap &src, QImage &dest, int scale,
-                     bool generateGCode, const CNCParameters &params)
+#if 0
+Halftoner::Halftoner(QPixmap const &src, QImage &dest, int const scale,
+                     bool const generateGCode, CNCParameters const &params)
     : m_cutCount(0) {
-  QImage src_img(src.toImage());
-  int offset = params.m_step / 2;
-  int radius = params.m_step / 2;
-  double max_dot_size(params.m_fullToolWidth * params.m_maxCutPercent);
-  double scale_factor(scale);
+  QImage const src_img(src.toImage());
+  int offset = params.m_step;
+  int const radius = params.m_step;
+  double const max_dot_size(params.m_fullToolWidth * params.m_maxCutPercent);
+  double const scale_factor(scale);
   bool write_y(true);
 
   dest.fill(qRgb(0, 0, 0));
@@ -148,4 +230,5 @@ Halftoner::Halftoner(const QPixmap &src, QImage &dest, int scale,
                           params.m_fastZ); // Lift tool to safe 'fast z' depth.
   m_gCode += "\n";
 }
+#endif
 }
